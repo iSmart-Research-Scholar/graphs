@@ -1,6 +1,8 @@
 import requests
 def getCitations(str):
-    paperId='649def34f8be52c8b66281af98ae884c09aef38b'
+    # paperId='649def34f8be52c8b66281af98ae884c09aef38b'
+    paperId=str
+    # print(paperId)
     link=f'https://api.semanticscholar.org/graph/v1/paper/{paperId}/citations?fields=isInfluential,paperId,title,referenceCount,citationCount'
     res=requests.get(link)
     # print(res.status_code)
@@ -32,7 +34,8 @@ def getCitations(str):
 
 
 def getReferences(str):
-    paperId='649def34f8be52c8b66281af98ae884c09aef38b'
+    # paperId='649def34f8be52c8b66281af98ae884c09aef38b'
+    paperId=str
     link=f'https://api.semanticscholar.org/graph/v1/paper/{paperId}/references?fields=isInfluential,paperId,title,referenceCount,citationCount'
     res=requests.get(link)
     # print(res.status_code)
@@ -61,3 +64,41 @@ def getReferences(str):
                 resultnew.append(ires["citedPaper"])
 
     return resultnew
+
+def getCitationsLimited(str):
+    # paperId='649def34f8be52c8b66281af98ae884c09aef38b'
+    paperId=str
+    # print(paperId)
+    link=f'https://api.semanticscholar.org/graph/v1/paper/{paperId}/citations?fields=paperId,title,referenceCount,citationCount&offset=0&limit=5'
+    res=requests.get(link)
+    # print(res.status_code)
+    result=res.json()['data']
+
+    return result
+
+
+def getReferencesLimited(str):
+    # paperId='649def34f8be52c8b66281af98ae884c09aef38b'
+    paperId=str
+    link=f'https://api.semanticscholar.org/graph/v1/paper/{paperId}/references?fields=paperId,title,referenceCount,citationCount'
+    res=requests.get(link)
+    # print(res.status_code)
+    result=res.json()['data']
+       
+    return result
+
+
+
+
+def nested_citations(paperId):
+    allCitations=getCitationsLimited(paperId)
+    level1=[]
+    
+
+    for item in allCitations:
+        # print(item["paperId"])
+        level1.append(getCitationsLimited(paperId))
+    return level1
+
+level1=getCitationsLimited('649def34f8be52c8b66281af98ae884c09aef38b')
+print(level1)
